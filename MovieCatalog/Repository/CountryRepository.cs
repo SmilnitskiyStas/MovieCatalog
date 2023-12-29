@@ -1,0 +1,37 @@
+﻿using AutoMapper;
+using MovieCatalog.Data;
+using MovieCatalog.Interfaces;
+using MovieCatalog.Models;
+
+namespace MovieCatalog.Repository
+{
+    public class CountryRepository : ICountryRepository
+    {
+        private readonly DataContext _context;
+
+        public CountryRepository(DataContext context)
+        {
+            _context = context;
+        }
+
+        public bool CountryExist(int countryId)
+        {
+            return _context.Categories.Any(c => c.CategoryId == countryId);
+        }
+
+        public ICollection<Country> GetCountries()
+        {
+            return _context.Countries.OrderBy(c => c.CountryId).ToList();
+        }
+
+        public Country GetCountry(int countryId)
+        {
+            return _context.Countries.Where(c => c.CountryId == countryId).FirstOrDefault();
+        }
+
+        public ICollection<Movie> GetMovieByCountry(int countryId)
+        {
+            return _context.MovieCountries.Where(c => c.CountryId == countryId).Select(m => m.Movie).ToList();
+        }
+    }
+}
