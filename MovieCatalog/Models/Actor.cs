@@ -1,5 +1,4 @@
-﻿using MovieCatalog.Models.Abstract;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace MovieCatalog.Models
 {

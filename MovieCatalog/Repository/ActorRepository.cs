@@ -11,14 +11,21 @@ namespace MovieCatalog.Repository
         {
             _context = context;
         }
+
+        public bool CreateActor(Actor actor)
+        {
+            _context.Actors.Add(actor);
+            return Save();
+        }
+
         public Actor GetActor(int actorId)
         {
-            return _context.Actors.OrderBy(a => a.ActorId == actorId).FirstOrDefault();
+            return _context.Actors.Where(a => a.ActorId == actorId).FirstOrDefault();
         }
 
         public Actor GetActor(string actorName)
         {
-            return _context.Actors.OrderBy(a => $"{a.FirstName} {a.LastName}" == actorName).FirstOrDefault();
+            return _context.Actors.Where(a => $"{a.FirstName} {a.LastName}" == actorName).FirstOrDefault();
         }
 
         public bool GetActorExist(int actorId)
@@ -39,6 +46,13 @@ namespace MovieCatalog.Repository
         public ICollection<Movie> GetMovieByActor(int actorId)
         {
             return _context.MovieActors.Where(a => a.ActorId == actorId).Select(m => m.Movie).ToList();
+        }
+
+        public bool Save()
+        {
+            var saved = _context.SaveChanges();
+
+            return saved > 0 ? true : false;
         }
     }
 }

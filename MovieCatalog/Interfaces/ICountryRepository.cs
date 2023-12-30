@@ -8,5 +8,7 @@ namespace MovieCatalog.Interfaces
         Country GetCountry(int countryId);
         ICollection<Movie> GetMovieByCountry(int countryId);
         bool CountryExist(int countryId);
+        bool CreateCounty(Country country);
+        bool Save();
     }
 }

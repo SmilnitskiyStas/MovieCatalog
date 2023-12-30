@@ -19,6 +19,13 @@ namespace MovieCatalog.Repository
             return _context.Categories.Any(c => c.CategoryId == countryId);
         }
 
+        public bool CreateCounty(Country country)
+        {
+            _context.Countries.Add(country);
+
+            return Save();
+        }
+
         public ICollection<Country> GetCountries()
         {
             return _context.Countries.OrderBy(c => c.CountryId).ToList();
@@ -32,6 +39,13 @@ namespace MovieCatalog.Repository
         public ICollection<Movie> GetMovieByCountry(int countryId)
         {
             return _context.MovieCountries.Where(c => c.CountryId == countryId).Select(m => m.Movie).ToList();
+        }
+
+        public bool Save()
+        {
+            var saved = _context.SaveChanges();
+
+            return saved > 0 ? true : false;
         }
     }
 }

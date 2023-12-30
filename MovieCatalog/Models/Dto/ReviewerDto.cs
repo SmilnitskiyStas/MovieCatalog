@@ -1,16 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MovieCatalog.Models
+namespace MovieCatalog.Models.Dto
 {
-    public class Reviewer
+    public class ReviewerDto
     {
-        [Key]
         public int ReviewerId { get; set; }
-        [Required]
         public string FirstName { get; set; }
-        [Required]
         public string LastName { get; set; }
         public DateTime BirthDay { get; set; }
-        public ICollection<Review> Reviews { get; set; }
     }
 }

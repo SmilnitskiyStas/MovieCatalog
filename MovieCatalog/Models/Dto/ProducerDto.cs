@@ -1,16 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MovieCatalog.Models
+namespace MovieCatalog.Models.Dto
 {
-    public class Producer
+    public class ProducerDto
     {
-        [Key]
         public int ProducerId { get; set; }
-        [Required]
         public string FirstName { get; set; }
-        [Required]
         public string LastName { get; set; }
         public DateTime BirthDay { get; set; }
-        public ICollection<MovieProducer> MovieProducers { get; set; }
     }
 }

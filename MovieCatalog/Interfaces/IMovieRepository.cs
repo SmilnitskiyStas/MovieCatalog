@@ -5,8 +5,10 @@ namespace MovieCatalog.Interfaces
     public interface IMovieRepository
     {
         ICollection<Movie> GetMovies();
-        Movie GetMovie(int id);
+        Movie GetMovie(int movieId);
         Movie GetMovie(string name);
-        bool MovieExist(int movieId);
+        bool MovieExists(int movieId);
+        bool CreateMovie(int actorId, int categoryId, int countryId, int ProducerId, Movie movieCreate);
+        bool Save();
     }
 }

@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MovieCatalog.Data;
 using MovieCatalog.Interfaces;
 using MovieCatalog.Models;
 using MovieCatalog.Models.Dto;
@@ -40,7 +38,7 @@ namespace MovieCatalog.Controllers
         [ProducesResponseType(400)]
         public IActionResult GetMovie(int movieId)
         {
-            if (!_movieRepository.MovieExist(movieId))
+            if (!_movieRepository.MovieExists(movieId))
             {
                 return NotFound();
             }
@@ -53,6 +51,38 @@ namespace MovieCatalog.Controllers
             }
 
             return Ok(movie);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public IActionResult CreateMovie([FromQuery] int actorId, [FromQuery] int categoryId,
+            [FromQuery] int countryId, [FromQuery] int producerId, [FromBody] MovieDto movieCreate)
+        {
+            if (movieCreate == null)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var movie = _movieRepository.GetMovies()
+                .Where(m => m.Title.Trim().ToUpper() == movieCreate.Title.Trim().ToUpper())
+                .FirstOrDefault();
+
+            if (movie != null)
+            {
+                ModelState.AddModelError("", "Movie already exists");
+                return StatusCode(422, ModelState);
+            }
+
+            var movieMap = _mapper.Map<Movie>(movieCreate);
+
+            if (!_movieRepository.CreateMovie(actorId, categoryId, countryId, producerId, movieMap))
+            {
+                ModelState.AddModelError("", "Something went wrong while saving!");
+                return StatusCode(500, ModelState);
+            }
+
+            return Ok("Successfully created!");
         }
     }
 }

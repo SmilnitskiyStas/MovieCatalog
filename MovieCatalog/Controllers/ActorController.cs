@@ -94,5 +94,41 @@ namespace MovieCatalog.Controllers
 
             return Ok(actors);
         }
+
+        [HttpPost]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public IActionResult CreateActor([FromBody]ActorDto actorCreate)
+        {
+            if (actorCreate == null)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var actor = _actorRepository.GetActors()
+                .Where(a => $"{a.FirstName} {a.LastName}".Trim().ToUpper() == $"{actorCreate.FirstName} {actorCreate.LastName}".Trim().ToUpper())
+                .FirstOrDefault();
+
+            if (actor != null)
+            {
+                ModelState.AddModelError("", "Actor already exists");
+                return StatusCode(422, ModelState);
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var actorMap = _mapper.Map<Actor>(actorCreate);
+
+            if (!_actorRepository.CreateActor(actorMap))
+            {
+                ModelState.AddModelError("", "Something went wrong while saving!");
+                return StatusCode(500, ModelState);
+            }
+
+            return Ok("Successfully created!");
+        }
     }
 }
