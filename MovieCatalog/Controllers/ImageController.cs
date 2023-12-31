@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using MovieCatalog.Interfaces;
 using MovieCatalog.Models;
 using MovieCatalog.Models.Dto;
+using MovieCatalog.Repository;
 
 namespace MovieCatalog.Controllers
 {
@@ -97,6 +98,70 @@ namespace MovieCatalog.Controllers
             }
 
             return Ok("Successfully created!");
+        }
+
+        [HttpPut("{imageId:int}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public IActionResult UpdateImage(int imageId, [FromBody] ImageDto imageUpdate)
+        {
+            if (imageUpdate == null)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (imageId != imageUpdate.ImageId)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (!_imageRepository.GetImageExists(imageId))
+            {
+                return NotFound();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var imageMap = _mapper.Map<Image>(imageUpdate);
+
+            if (!_imageRepository.UpdateImage(imageMap))
+            {
+                ModelState.AddModelError("", "Something went wrong updating image");
+                return StatusCode(500, ModelState);
+            }
+
+            return NoContent();
+        }
+
+        [HttpDelete("{imageId:int}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public IActionResult DeleteImage(int imageId)
+        {
+            if (imageId == 0)
+            {
+                return BadRequest();
+            }
+
+            if (!_imageRepository.GetImageExists(imageId))
+            {
+                return NotFound();
+            }
+
+            var imageMap = _mapper.Map<Image>(_imageRepository.GetImage(imageId));
+
+            if (!_imageRepository.DeleteImage(imageMap))
+            {
+                ModelState.AddModelError("", "Something went wrong deleting image");
+                return StatusCode(500, ModelState);
+            }
+
+            return NoContent();
         }
     }
 }

@@ -103,5 +103,69 @@ namespace MovieCatalog.Controllers
 
             return Ok("Successfully created!");
         }
+
+        [HttpPut("{countryId:int}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public IActionResult UpdateCountry(int countryId, [FromBody] ActorDto countryUpdate)
+        {
+            if (countryUpdate == null)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (countryId != countryUpdate.ActorId)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (!_countryRepository.CountryExist(countryId))
+            {
+                return NotFound();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var countryMap = _mapper.Map<Country>(countryUpdate);
+
+            if (!_countryRepository.UpdateCounty(countryMap))
+            {
+                ModelState.AddModelError("", "Something went wrong updating country");
+                return StatusCode(500, ModelState);
+            }
+
+            return NoContent();
+        }
+
+        [HttpDelete("{countryId:int}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public IActionResult DeleteCountry(int countryId)
+        {
+            if (countryId == 0)
+            {
+                return BadRequest();
+            }
+
+            if (!_countryRepository.CountryExist(countryId))
+            {
+                return NotFound();
+            }
+
+            var countryMap = _mapper.Map<Country>(_countryRepository.GetCountry(countryId));
+
+            if (!_countryRepository.DeleteCounty(countryMap))
+            {
+                ModelState.AddModelError("", "Something went wrong deleting country");
+                return StatusCode(500, ModelState);
+            }
+
+            return NoContent();
+        }
     }
 }

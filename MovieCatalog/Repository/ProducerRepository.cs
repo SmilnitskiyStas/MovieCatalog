@@ -20,6 +20,12 @@ namespace MovieCatalog.Repository
             return Save();
         }
 
+        public bool DeleteProducer(Producer producer)
+        {
+            _context.Producers.Remove(producer);
+            return Save();
+        }
+
         public ICollection<Movie> GetMovieOfAProducer(int producerId)
         {
             return _context.MovieProducers.Where(p => p.ProducerId == producerId).Select(m => m.Movie).ToList();
@@ -55,6 +61,12 @@ namespace MovieCatalog.Repository
             var saved = _context.SaveChanges();
 
             return saved > 0 ? true : false;
+        }
+
+        public bool UpdateProducer(Producer producer)
+        {
+            _context.Producers.Update(producer);
+            return Save();
         }
     }
 }

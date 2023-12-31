@@ -26,6 +26,12 @@ namespace MovieCatalog.Repository
             return Save();
         }
 
+        public bool DeleteCounty(Country country)
+        {
+            _context.Countries.Remove(country);
+            return Save();
+        }
+
         public ICollection<Country> GetCountries()
         {
             return _context.Countries.OrderBy(c => c.CountryId).ToList();
@@ -46,6 +52,12 @@ namespace MovieCatalog.Repository
             var saved = _context.SaveChanges();
 
             return saved > 0 ? true : false;
+        }
+
+        public bool UpdateCounty(Country country)
+        {
+            _context.Countries.Update(country);
+            return Save();
         }
     }
 }

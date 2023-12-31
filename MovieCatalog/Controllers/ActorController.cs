@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using MovieCatalog.Interfaces;
 using MovieCatalog.Models;
 using MovieCatalog.Models.Dto;
+using MovieCatalog.Repository;
 
 namespace MovieCatalog.Controllers
 {
@@ -129,6 +130,70 @@ namespace MovieCatalog.Controllers
             }
 
             return Ok("Successfully created!");
+        }
+
+        [HttpPut("{actorId:int}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public IActionResult UpdateActor(int actorId, [FromBody] ActorDto actorUpdate)
+        {
+            if (actorUpdate == null)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (actorId != actorUpdate.ActorId)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (!_actorRepository.GetActorExist(actorId))
+            {
+                return NotFound();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var actorMap = _mapper.Map<Actor>(actorUpdate);
+
+            if (!_actorRepository.UpdateActor(actorMap))
+            {
+                ModelState.AddModelError("", "Something went wrong updating actor");
+                return StatusCode(500, ModelState);
+            }
+
+            return NoContent();
+        }
+
+        [HttpDelete("{actorId:int}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public IActionResult DeleteActor(int actorId)
+        {
+            if (actorId == 0)
+            {
+                return BadRequest();
+            }
+
+            if (!_actorRepository.GetActorExist(actorId))
+            {
+                return NotFound();
+            }
+
+            var actorMap = _mapper.Map<Actor>(_actorRepository.GetActor(actorId));
+
+            if (!_actorRepository.DeleteActor(actorMap))
+            {
+                ModelState.AddModelError("", "Something went wrong deleting category");
+                return StatusCode(500, ModelState);
+            }
+
+            return NoContent();
         }
     }
 }

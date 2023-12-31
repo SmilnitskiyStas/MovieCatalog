@@ -11,6 +11,8 @@ namespace MovieCatalog.Interfaces
         ICollection<Producer> GetProducerByMovie(int movieId);
         bool GetProducerExists(int producerId);
         bool CreateProducer(Producer producer);
+        bool UpdateProducer(Producer producer);
+        bool DeleteProducer(Producer producer);
         bool Save();
     }
 }

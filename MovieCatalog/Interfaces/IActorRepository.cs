@@ -11,6 +11,8 @@ namespace MovieCatalog.Interfaces
         ICollection<Actor> GetActorsOfAMovie(int movieId);
         ICollection<Movie> GetMovieByActor(int actorId);
         bool CreateActor(Actor actor);
+        bool UpdateActor(Actor actor);
+        bool DeleteActor(Actor actor);
         bool Save();
     }
 }

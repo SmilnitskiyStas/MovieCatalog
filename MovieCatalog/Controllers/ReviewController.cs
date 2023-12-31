@@ -118,5 +118,69 @@ namespace MovieCatalog.Controllers
 
             return Ok("Successfully created!");
         }
+
+        [HttpPut("{reviewId:int}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public IActionResult UpdateReview(int reviewId, [FromBody] ReviewDto reviewUpdate)
+        {
+            if (reviewUpdate == null)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (reviewId != reviewUpdate.ReviewId)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (!_reviewRepository.GetReviewExists(reviewId))
+            {
+                return NotFound();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var reviewMap = _mapper.Map<Review>(reviewUpdate);
+
+            if (!_reviewRepository.UpdateReview(reviewMap))
+            {
+                ModelState.AddModelError("", "Something went wrong updating review");
+                return StatusCode(500, ModelState);
+            }
+
+            return NoContent();
+        }
+
+        [HttpDelete("{reviewId:int}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public IActionResult DeleteReviewer(int reviewId)
+        {
+            if (reviewId == 0)
+            {
+                return BadRequest();
+            }
+
+            if (!_reviewRepository.GetReviewExists(reviewId))
+            {
+                return NotFound();
+            }
+
+            var reviewMap = _mapper.Map<Review>(_reviewRepository.GetReview(reviewId));
+
+            if (!_reviewRepository.DeleteReview(reviewMap))
+            {
+                ModelState.AddModelError("", "Something went wrong deleting review");
+                return StatusCode(500, ModelState);
+            }
+
+            return NoContent();
+        }
     }
 }

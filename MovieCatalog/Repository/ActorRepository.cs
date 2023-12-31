@@ -18,6 +18,12 @@ namespace MovieCatalog.Repository
             return Save();
         }
 
+        public bool DeleteActor(Actor actor)
+        {
+            _context.Actors.Remove(actor);
+            return Save();
+        }
+
         public Actor GetActor(int actorId)
         {
             return _context.Actors.Where(a => a.ActorId == actorId).FirstOrDefault();
@@ -53,6 +59,12 @@ namespace MovieCatalog.Repository
             var saved = _context.SaveChanges();
 
             return saved > 0 ? true : false;
+        }
+
+        public bool UpdateActor(Actor actor)
+        {
+            _context.Actors.Update(actor);
+            return Save();
         }
     }
 }

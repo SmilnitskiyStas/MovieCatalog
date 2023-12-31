@@ -14,7 +14,7 @@ namespace MovieCatalog.Controllers
         private readonly ICategoryRepository _categoryRepository;
         private readonly IMapper _mapper;
 
-        public CategoryController(ICategoryRepository categoryRepository, IMapper mapper) 
+        public CategoryController(ICategoryRepository categoryRepository, IMapper mapper)
         {
             _categoryRepository = categoryRepository;
             _mapper = mapper;
@@ -112,6 +112,70 @@ namespace MovieCatalog.Controllers
             }
 
             return Ok("Successfully created");
+        }
+
+        [HttpPut("{categoryId:int}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public IActionResult UpdateCategory(int categoryId, [FromBody] CategoryDto categoryUpdate)
+        {
+            if (categoryUpdate == null)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (categoryId != categoryUpdate.CategoryId)
+            {
+                return BadRequest(ModelState);
+            }
+            
+            if (!_categoryRepository.CategoryExist(categoryId))
+            {
+                return NotFound();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var categoryMap = _mapper.Map<Category>(categoryUpdate);
+
+            if (!_categoryRepository.UpdateCategory(categoryMap))
+            {
+                ModelState.AddModelError("", "Something went wrong updating category");
+                return StatusCode(500, ModelState);
+            }
+
+            return NoContent();
+        }
+
+        [HttpDelete("{categoryId:int}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public IActionResult DeleteCategory(int categoryId)
+        {
+            if (categoryId == 0)
+            {
+                return BadRequest();
+            }
+
+            if (!_categoryRepository.CategoryExist(categoryId))
+            {
+                return NotFound();
+            }
+
+            var categoryMap = _mapper.Map<Category>(_categoryRepository.GetCategory(categoryId));
+
+            if (!_categoryRepository.DeleteCategory(categoryMap))
+            {
+                ModelState.AddModelError("", "Something went wrong deleting category");
+                return StatusCode(500, ModelState);
+            }
+
+            return NoContent();
         }
     }
 }

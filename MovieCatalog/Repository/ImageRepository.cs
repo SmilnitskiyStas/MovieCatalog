@@ -21,6 +21,12 @@ namespace MovieCatalog.Repository
             return Save();
         }
 
+        public bool DeleteImage(Image imageDelete)
+        {
+            _context.Images.Remove(imageDelete);
+            return Save();
+        }
+
         public Image GetImage(int imageId)
         {
             return _context.Images.Where(i => i.ImageId == imageId).FirstOrDefault();
@@ -46,6 +52,12 @@ namespace MovieCatalog.Repository
             var saved = _context.SaveChanges();
 
             return saved > 0 ? true : false;
+        }
+
+        public bool UpdateImage(Image imageUpdate)
+        {
+            _context.Images.Update(imageUpdate);
+            return Save();
         }
     }
 }

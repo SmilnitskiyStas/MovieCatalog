@@ -10,6 +10,8 @@ namespace MovieCatalog.Interfaces
         ICollection<Image> GetImageByMovie(int  movieId);
         bool GetImageExists(int imageId);
         bool CreateImage(Image imageCreate);
+        bool UpdateImage(Image imageUpdate);
+        bool DeleteImage(Image imageDelete);
         bool Save();
     }
 }
