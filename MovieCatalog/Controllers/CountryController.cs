@@ -60,12 +60,32 @@ namespace MovieCatalog.Controllers
         [ProducesResponseType(400)]
         public IActionResult GetMovieByCountry(int countryId)
         {
+            if (!_countryRepository.CountryExist(countryId))
+            {
+                return NotFound();
+            }
+
             var movies = _mapper.Map<List<MovieDto>>(_countryRepository.GetMovieByCountry(countryId));
 
             if (!ModelState.IsValid)
                 return BadRequest();
 
             return Ok(movies);
+        }
+
+        [HttpGet("{movieId:int}/countries")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Country>))]
+        [ProducesResponseType(400)]
+        public IActionResult GetCountryOfAMovie(int movieId)
+        {
+            var countries = _countryRepository.GetCountriesOfAMovie(movieId);
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            return Ok(countries);
         }
 
         [HttpPost]
@@ -108,14 +128,14 @@ namespace MovieCatalog.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateCountry(int countryId, [FromBody] ActorDto countryUpdate)
+        public IActionResult UpdateCountry(int countryId, [FromBody] CountryDto countryUpdate)
         {
             if (countryUpdate == null)
             {
                 return BadRequest(ModelState);
             }
 
-            if (countryId != countryUpdate.ActorId)
+            if (countryId != countryUpdate.CountryId)
             {
                 return BadRequest(ModelState);
             }

@@ -37,6 +37,11 @@ namespace MovieCatalog.Repository
             return _context.Countries.OrderBy(c => c.CountryId).ToList();
         }
 
+        public ICollection<Country> GetCountriesOfAMovie(int movieId)
+        {
+            return _context.MovieCountries.Where(m => m.MovieId == movieId).Select(c => c.Country).ToList();
+        }
+
         public Country GetCountry(int countryId)
         {
             return _context.Countries.Where(c => c.CountryId == countryId).FirstOrDefault();

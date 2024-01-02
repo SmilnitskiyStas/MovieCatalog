@@ -98,8 +98,8 @@ namespace MovieCatalog.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateMovie(int movieId, [FromBody] MovieDto movieUpdate, [FromQuery] int actorId, [FromQuery] int categoryId,
-            [FromQuery] int countryId, [FromQuery] int producerId)
+        public IActionResult UpdateMovie(int movieId, [FromQuery] int oldActorId, [FromQuery] int newActorId, [FromQuery] int oldCategoryId , [FromQuery] int newCategoryId,
+            [FromQuery] int oldCountryId, [FromQuery] int newCountryId, [FromQuery] int oldProducerId, [FromQuery] int newProducerId, [FromBody] MovieDto movieUpdate)
         {
             if (movieUpdate == null)
             {
@@ -123,7 +123,7 @@ namespace MovieCatalog.Controllers
 
             var movieMap = _mapper.Map<Movie>(movieUpdate);
 
-            if (!_movieRepository.UpdateMovie(actorId, categoryId, countryId, producerId, movieMap))
+            if (!_movieRepository.UpdateMovie(oldActorId, newActorId, oldCategoryId, newCategoryId, oldCountryId, newCountryId, oldProducerId, newProducerId, movieMap))
             {
                 ModelState.AddModelError("", "Something went wrong updating movie");
                 return StatusCode(500, ModelState);

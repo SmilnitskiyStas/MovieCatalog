@@ -7,6 +7,7 @@ namespace MovieCatalog.Interfaces
         ICollection<Country> GetCountries();
         Country GetCountry(int countryId);
         ICollection<Movie> GetMovieByCountry(int countryId);
+        ICollection<Country> GetCountriesOfAMovie(int movieId);
         bool CountryExist(int countryId);
         bool CreateCounty(Country country);
         bool UpdateCounty(Country country);

@@ -89,46 +89,86 @@ namespace MovieCatalog.Repository
             return saved > 0 ? true : false;
         }
 
-        public bool UpdateMovie(int actorId, int categoryId, int countryId, int producerId, Movie movieUpdate)
+        public bool UpdateMovie(int oldActorId, int newActorId, int oldCategoryId, int newCategoryId,
+            int oldCountryId, int newCountryId, int oldProducerId, int newProducerId, Movie movieUpdate)
         {
-            var movieActorEntity = _context.Actors.Where(a => a.ActorId == actorId).FirstOrDefault();
-            var movieCategoryEntity = _context.Categories.Where(c => c.CategoryId == categoryId).FirstOrDefault();
-            var movieCountryEntity = _context.Countries.Where(c => c.CountryId == countryId).FirstOrDefault();
-            var movieProducerEntity = _context.Producers.Where(p => p.ProducerId == producerId).FirstOrDefault();
+            var movieActorEntity = _context.Actors.Where(a => a.ActorId == newActorId).FirstOrDefault();
+            var movieCategoryEntity = _context.Categories.Where(c => c.CategoryId == newCategoryId).FirstOrDefault();
+            var movieCountryEntity = _context.Countries.Where(c => c.CountryId == newCountryId).FirstOrDefault();
+            var movieProducerEntity = _context.Producers.Where(p => p.ProducerId == newProducerId).FirstOrDefault();
 
-            var movieActor = new MovieActor
+            if (newActorId != oldActorId)
             {
-                Actor = movieActorEntity,
-                Movie = movieUpdate
-            };
+                var movieActor = _context.MovieActors.Where(a => a.ActorId == oldActorId).FirstOrDefault();
 
-            _context.MovieActors.Update(movieActor);
+                if (movieActor != null)
+                {
+                    _context.MovieActors.Remove(movieActor);
+                    Save();
+                }
 
-            var movieCategory = new MovieCategory
+                movieActor = new MovieActor
+                {
+                    Actor = movieActorEntity,
+                    Movie = movieUpdate
+                };
+
+                _context.MovieActors.Update(movieActor);
+            }
+
+            if (newCategoryId != oldCategoryId)
             {
-                Category = movieCategoryEntity,
-                Movie = movieUpdate
-            };
+                var movieCategory = _context.MovieCategories.Where(c => c.CategoryId == oldCategoryId).FirstOrDefault();
+                if (movieCategory != null)
+                {
+                    _context.MovieCategories.Remove(movieCategory);
+                    Save();
+                }
 
-            _context.MovieCategories.Update(movieCategory);
+                movieCategory = new MovieCategory
+                {
+                    Category = movieCategoryEntity,
+                    Movie = movieUpdate
+                };
 
-            var movieCountry = new MovieCountry
+                _context.MovieCategories.Update(movieCategory);
+            }
+
+            if (newCountryId != oldCountryId)
             {
-                Country = movieCountryEntity,
-                Movie = movieUpdate
-            };
+                var movieCountry = _context.MovieCountries.Where(c => c.CountryId == oldCountryId).FirstOrDefault();
+                if (movieCountry != null)
+                {
+                _context.MovieCountries.Remove(movieCountry);
+                Save();
+                }
 
-            _context.MovieCountries.Update(movieCountry);
+                movieCountry = new MovieCountry
+                {
+                    Country = movieCountryEntity,
+                    Movie = movieUpdate
+                };
 
-            var movieProducer = new MovieProducer
+                _context.MovieCountries.Update(movieCountry);
+            }
+
+            if (newProducerId != oldProducerId)
             {
-                Producer = movieProducerEntity,
-                Movie = movieUpdate
-            };
+                var movieProducer = _context.MovieProducers.Where(p => p.ProducerId == oldProducerId).FirstOrDefault();
+                if (movieProducer != null)
+                {
+                _context.MovieProducers.Remove(movieProducer);
+                Save();
+                }
 
-            _context.MovieProducers.Update(movieProducer);
+                movieProducer = new MovieProducer
+                {
+                    Producer = movieProducerEntity,
+                    Movie = movieUpdate
+                };
 
-            _context.Movies.Update(movieUpdate);
+                _context.MovieProducers.Update(movieProducer);
+            }
 
             return Save();
         }
